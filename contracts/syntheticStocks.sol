@@ -1,5 +1,12 @@
 pragma solidity ^0.4.24;
 
+//import "requestStockPrices.sol";
+
+contract RopstenConsumer2 {
+    function requestEthereumPrice(string _currency, address _addr);
+}
+
+
 contract syntheticStocks {
 
   struct offer {
@@ -11,6 +18,9 @@ contract syntheticStocks {
   }
 
   struct agreement {
+    address client;
+    address provider;
+
     uint256 providerCollateralType;
     uint256 providerCollateralAmount;
 
@@ -52,6 +62,8 @@ contract syntheticStocks {
 
   uint256 currentAgrIndex;
   mapping (uint256 => agreement) _allAgreements;
+  mapping (address => uint256[]) _agreements_clients;
+  mapping (address => uint256[]) _agreements_providers;
 
   constructor() public {
     currentOfferIndex   = 0;
@@ -59,6 +71,36 @@ contract syntheticStocks {
     currentTempAgrIndex = 0;
   }
 
+  uint256 public currentPrice;
+  function bytes32ToStr(bytes32 _bytes32) internal constant returns (string){
+
+    // string memory str = string(_bytes32);
+    // TypeError: Explicit type conversion not allowed from "bytes32" to "string storage pointer"
+    // thus we should fist convert bytes32 to bytes (to dynamically-sized byte array)
+
+    bytes memory bytesArray = new bytes(32);
+    for (uint256 i; i < 32; i++) {
+        bytesArray[i] = _bytes32[i];
+        }
+    return string(bytesArray);
+    }
+
+  function getPrice (string _ticker) {
+      // call address-> requestEthereumPrice(_ticker, this)
+      // -
+      // address watch_addr;
+      // watch_addr = 0x34263bf3726f1512194c3b0709e1d99472ffa583;
+
+      RopstenConsumer2 r = RopstenConsumer2(0x34263bf3726f1512194c3b0709e1d99472ffa583);
+      r.requestEthereumPrice(_ticker, this);
+      // watch_addr.call(bytes4(sha3("requestEthereumPrice(string, address)")), _ticker, this);
+  }
+
+  function fulfillEthereumPrice(bytes32 _requestId, uint256 _price)
+    public
+  {
+    currentPrice = _price;
+  }
 
   /*
      Client creates a new offer to buy a stock.
@@ -200,16 +242,20 @@ contract syntheticStocks {
 
     agreement memory agr;
 
+    //bytes32 memory btsStock = _allTempAgreements[index].stock;
+    string memory strStock = bytes32ToStr(_allTempAgreements[index].stock); //string(btsStock);
+    getPrice(strStock); 
+
     agr.stock       = _allTempAgreements[index].stock;
     agr.endBlock    = _allTempAgreements[index].endBlock;
-    agr.startPrice  = 0; //TODO: GET PRICE
+    agr.startPrice  = currentPrice; //TODO: GET PRICE
     agr.providerCollateralType     =  _allTempAgreements[index].providerCollateralType;
     agr.providerCollateralAmount   =  _allTempAgreements[index].providerCollateralAmount;
     agr.providerCollateralType   =  _allTempAgreements[index].providerCollateralType;
     agr.providerCollateralAmount =  _allTempAgreements[index].providerCollateralAmount;
 
-    //_agreements_clients[msg.sender].push(currentAgrIndex);
-    //_agreements_provider[_allTempAgreements[index].provider].push(currentAgrIndex);
+    _agreements_clients[msg.sender].push(currentAgrIndex);
+    _agreements_providers[_allTempAgreements[index].provider].push(currentAgrIndex);
 
     _allAgreements[currentAgrIndex] = agr;
     currentAgrIndex++;
