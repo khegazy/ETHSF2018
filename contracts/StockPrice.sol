@@ -1017,13 +1017,19 @@ contract RopstenConsumer is Chainlinked, Ownable {
   uint256 public currentPrice;
   int256 public changeDay;
   bytes32 public lastMarket;
+  uint256 public flag;
+// rinkeby
+  address constant ROPSTEN_LINK_ADDRESS =  0x01BE23585060835E02B77ef475b0Cc51aA1e0709;
+  address constant ROPSTEN_ORACLE_ADDRESS = 0xf18455e70984e8fda0ADbe2c8dD21509DBeFA218;
 
-  address constant ROPSTEN_LINK_ADDRESS = 0x20fE562d797A42Dcb3399062AE9546cd06f63280;
-  address constant ROPSTEN_ORACLE_ADDRESS = 0x18170370BceC331F31d41B9b83DE772F5Bd47D82;
+//   address constant ROPSTEN_LINK_ADDRESS = 0x20fE562d797A42Dcb3399062AE9546cd06f63280;
+//   address constant ROPSTEN_ORACLE_ADDRESS = 0x261a3F70acdC85CfC2FFc8badE43b1D42bf75D69;
 
-  bytes32 constant PRICE_SPEC_ID = bytes32("b150bc3c11224b27884e608f0e205700");
-  bytes32 constant CHANGE_SPEC_ID = bytes32("79312731984145e28b798d0c397f2ac0");
-  bytes32 constant MARKET_SPEC_ID = bytes32("f534ec6280174a08804be2a4049e4e3a");
+//   bytes32 constant PRICE_SPEC_ID = bytes32("2216dd2bf5464687a05ded0b844e200c");
+  bytes32 constant PRICE_SPEC_ID = bytes32("ccfe8101fbf043d2b83ce805e0b3b2f6");
+  
+  bytes32 constant CHANGE_SPEC_ID = bytes32("3f97669ef7c54e1990ce97149d7ada19");
+  bytes32 constant MARKET_SPEC_ID = bytes32("3116f19a4b00434ba28b4a5cec349474");
 
   event RequestEthereumPriceFulfilled(
     bytes32 indexed requestId,
@@ -1044,8 +1050,8 @@ contract RopstenConsumer is Chainlinked, Ownable {
     setLinkToken(ROPSTEN_LINK_ADDRESS);
     setOracle(ROPSTEN_ORACLE_ADDRESS);
   }
-
-  function strConcat(string _a, string _b, string _c, string _d, string _e) internal returns (string){
+  
+function strConcat(string _a, string _b, string _c, string _d, string _e) internal returns (string){
     bytes memory _ba = bytes(_a);
     bytes memory _bb = bytes(_b);
     bytes memory _bc = bytes(_c);
@@ -1062,26 +1068,19 @@ contract RopstenConsumer is Chainlinked, Ownable {
     return string(babcde);
 }
 
-function strConcat(string _a, string _b, string _c, string _d) internal returns (string) {
-    return strConcat(_a, _b, _c, _d, "");
-}
-
 function strConcat(string _a, string _b, string _c) internal returns (string) {
     return strConcat(_a, _b, _c, "", "");
 }
 
-function strConcat(string _a, string _b) internal returns (string) {
-    return strConcat(_a, _b, "", "", "");
-}
-
-  function requestEthereumPrice(string _currency) 
+  function requestEthereumPrice(string _currency, address _addr) 
     public
-    onlyOwner
   {
-    ChainlinkLib.Run memory run = newRun(PRICE_SPEC_ID, this, "fulfillEthereumPrice(bytes32,uint256)");
+    ChainlinkLib.Run memory run = newRun(PRICE_SPEC_ID, _addr, "fulfillEthereumPrice(bytes32,uint256)");
     // run.add("url", "https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,EUR,JPY");
+    
     string memory url = strConcat("https://api.iextrading.com/1.0/stock/market/batch?symbols=", _currency, "&types=quote&range=1m&last=1");
     run.add("url", url);
+
     string[] memory path = new string[](3);
     path[0] = _currency;
     path[1] = "quote";
@@ -1091,60 +1090,15 @@ function strConcat(string _a, string _b) internal returns (string) {
     chainlinkRequest(run, LINK(1));
   }
 
-  function requestEthereumChange(string _currency)
-    public
-    onlyOwner
-  {
-    ChainlinkLib.Run memory run = newRun(CHANGE_SPEC_ID, this, "fulfillEthereumChange(bytes32,int256)");
-    run.add("url", "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=ETH&tsyms=USD,EUR,JPY");
-    string[] memory path = new string[](4);
-    path[0] = "RAW";
-    path[1] = "ETH";
-    path[2] = _currency;
-    path[3] = "CHANGEPCTDAY";
-    run.addStringArray("path", path);
-    run.addInt("times", 1000000000);
-    chainlinkRequest(run, LINK(1));
-  }
-
-  function requestEthereumLastMarket(string _currency)
-    public
-    onlyOwner
-  {
-    ChainlinkLib.Run memory run = newRun(MARKET_SPEC_ID, this, "fulfillEthereumLastMarket(bytes32,bytes32)");
-    run.add("url", "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=ETH&tsyms=USD,EUR,JPY");
-    string[] memory path = new string[](4);
-    path[0] = "RAW";
-    path[1] = "ETH";
-    path[2] = _currency;
-    path[3] = "LASTMARKET";
-    run.addStringArray("path", path);
-    chainlinkRequest(run, LINK(1));
-  }
-
   function fulfillEthereumPrice(bytes32 _requestId, uint256 _price)
     public
     checkChainlinkFulfillment(_requestId)
   {
     emit RequestEthereumPriceFulfilled(_requestId, _price);
     currentPrice = _price;
+    flag = 1;
   }
 
-  function fulfillEthereumChange(bytes32 _requestId, int256 _change)
-    public
-    checkChainlinkFulfillment(_requestId)
-  {
-    emit RequestEthereumChangeFulfilled(_requestId, _change);
-    changeDay = _change;
-  }
-
-  function fulfillEthereumLastMarket(bytes32 _requestId, bytes32 _market)
-    public
-    checkChainlinkFulfillment(_requestId)
-  {
-    emit RequestEthereumLastMarket(_requestId, _market);
-    lastMarket = _market;
-  }
 
   function withdrawLink() public onlyOwner {
     LinkToken link = LinkToken(chainlinkToken());
