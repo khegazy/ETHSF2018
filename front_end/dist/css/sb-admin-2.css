@@ -95,7 +95,8 @@ body {
 }
 
 .panel-body {
-  margin: 2%;
+  margin-left: 2%;
+  margin-right: 2%;
 }
 /*.sidebar .nav-second-level li a {*/
   /*padding-left: 37px;*/

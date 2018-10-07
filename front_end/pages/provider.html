@@ -61,12 +61,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-6 col-md-6">
                     <div class="panel panel-green">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-9 text-right">
-                                    <div>Address: 12ede23112-1231dfr11-1dd124123-123ed1234</div>
+                                    <div>Address: 0xad3d40cb665a10e446c2bf16aadfedf61f8aff92</div>
                                 </div>
                             </div>
                         </div>
@@ -78,17 +78,6 @@
                             <div class="row">
                                 <div class="col-xs-9 text-right">
                                     <div>Eth Balance: 12.0192</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="panel panel-red">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-9 text-right">
-                                    <div>USD: $2000</div>
                                 </div>
                             </div>
                         </div>
@@ -111,38 +100,15 @@
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Expiration Date</th>
-                                                    <th>Current Price ($)</th>
+                                                    <th>Partner Bloom Id</th>
+                                                    <th>Current Price (ETH)</th>
                                                     <th>Your Collateral</th>
                                                     <th>Partner Collateral</th>
-                                                    <th>Contract Type</th>
+                                                    <th>Expiration Date</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Tesla</td>
-                                                    <td>10/21/2018</td>
-                                                    <td>$420</td>
-                                                    <td>$380</td>
-                                                    <td>$500</td>
-                                                    <th>Client</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tesla</td>
-                                                    <td>10/21/2018</td>
-                                                    <td>$420</td>
-                                                    <td>$380</td>
-                                                    <td>$500</td>
-                                                    <th>Client</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tesla</td>
-                                                    <td>10/21/2018</td>
-                                                    <td>$420</td>
-                                                    <td>$380</td>
-                                                    <td>$500</td>
-                                                    <th>Client</th>
-                                                </tr>
+                                            <tbody id="contracts_table">
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -157,12 +123,9 @@
                         <div class="panel-heading">
                             <i class="fa fa-bar-chart-o fa-fw"></i> Create Agreement
                         </div>
-                        Name: <input type="text" name="fname" id="fname"><br>
-                        <br>
-                        Collateral: <input type="text" name="fcollateral" id="fcollateral"><br>
-                        <br>
-                        Expiration Date: <input type="text" name="fdate" id="fdate"><br>
-                        <button id="create_agreement"> Create! </button>
+                        <div class="panel-body">
+                            Collateral: <input type="text" name="fcollateral" id="fcollateral"><br>
+                        </div>
                     </div>
 
                 </div>
@@ -177,52 +140,17 @@
                         <div class="panel-body">
                             <div class="row">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered table-hover table-striped">
+                                        <table class="table table-bordered table-hover table-striped" >
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Bloom ID</th>
-                                                    <th>Collateral</th>
+                                                    <th>Partner Bloom ID</th>
+                                                    <th>Collateral (ETH)</th>
                                                     <th>Expiration Date</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>3326</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>3:29 PM</td>
-                                                    <td>$321.33</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3325</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>3:20 PM</td>
-                                                    <td>$234.34</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3324</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>3:03 PM</td>
-                                                    <td>$724.17</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3323</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>3:00 PM</td>
-                                                    <td>$23.71</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3322</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>2:49 PM</td>
-                                                    <td>$8345.23</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3321</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>2:23 PM</td>
-                                                    <td>$245.12</td>
-                                                </tr>
+                                            <tbody id="offer_table">
                                             </tbody>
                                         </table>
                                     </div>
@@ -235,52 +163,22 @@
                     <!-- /.panel -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Open Agreements
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Pending Agreements
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="row">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered table-hover table-striped" id="agreement_table">
+                                        <table class="table table-bordered table-hover table-striped">
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Bloom ID</th>
-                                                    <th>Collateral</th>
+                                                    <th>Partner Bloom Id</th>
+                                                    <th>Collateral (ETH)</th>
                                                     <th>Expiration Date</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>3326</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>3:29 PM</td>
-                                                    <td>$321.33</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3325</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>3:20 PM</td>
-                                                    <td>$234.34</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3324</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>3:03 PM</td>
-                                                    <td>$724.17</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3323</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>3:00 PM</td>
-                                                    <td>$23.71</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3322</td>
-                                                    <td>10/21/2013</td>
-                                                    <td>2:49 PM</td>
-                                                    <td>$8345.23</td>
-                                                </tr>
+                                            <tbody id="agreements_table">
                                             </tbody>
                                         </table>
                                     </div>
@@ -315,7 +213,7 @@
     <script src="../vendor/morrisjs/morris.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="../dist/js/sb-admin-2.js"></script>
+    <script src="../dist/js/sb-admin-2-provider.js"></script>
 
 </body>
 
